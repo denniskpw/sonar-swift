@@ -204,6 +204,9 @@ binaryName=''; readParameter binaryName 'sonar.swift.appName'
 plistFile=`xcodebuild -showBuildSettings -project "${projectFile}" | grep -i 'PRODUCT_SETTINGS_PATH' -m 1 | sed 's/[ ]*PRODUCT_SETTINGS_PATH = //'`
 # Number version from plist if no sonar.projectVersion
 numVerionFromPlist=`defaults read ${plistFile} CFBundleShortVersionString`
+# Path to `.swiftlint.yml`
+swiftlintConfig=''; readParameter swiftlintConfig 'sonar.swift.lintConfig'
+
 
 # Read destination simulator
 destinationSimulator=''; readParameter destinationSimulator 'sonar.swift.simulator'
@@ -343,7 +346,7 @@ if [ "$swiftlint" = "on" ]; then
 		while read word; do
 
 			# Run SwiftLint command
-		    $SWIFTLINT_CMD lint --path "$word" > sonar-reports/"$(echo $word | sed 's/\//_/g')"-swiftlint.txt
+		    $SWIFTLINT_CMD lint --config "$swiftlintConfig" --path "$word" > sonar-reports/"$(echo $word | sed 's/\//_/g')"-swiftlint.txt
 
 		done < tmpFileRunSonarSh
 		rm -rf tmpFileRunSonarSh
